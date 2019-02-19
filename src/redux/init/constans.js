@@ -1,0 +1,2 @@
+export const SET_LOCALDB = 'SET_LOCALDB';
+export const SET_LOCALPROPS = 'SET_LOCALPROPS';
