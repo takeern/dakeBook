@@ -1,3 +1,5 @@
+import '../static/iconfont';
+
 const localStorageGet = (key, type) => {
     switch (type) {
         case ('table'): 
