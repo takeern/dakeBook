@@ -5,6 +5,7 @@ import { localStorageGet, localStorageSet } from '../ulit/ulit';
 // component
 import ReadTable from './ReadTable';
 import ReadContent from './ReadContent';
+import ReadSet from './ReadSet';
 
 import '../static/css/index.less';
 import '../static/css/read.less';
@@ -27,6 +28,7 @@ export default class Read extends Component {
             readingBookName: decodeURI(new RegExp(/[?&]bookName=([^&]+)/g).exec(window.location.href)[1]),
             bookNumber: new RegExp(/[?&]bookNumber=([^&]+)/g).exec(window.location.href)[1],
             readingData: null, // 当前阅读章节数据
+            modelState: '白天',
         };
     }
     /**
@@ -328,20 +330,23 @@ export default class Read extends Component {
         }
     }
     render () {
-        const { readingData, bookTable } = this.state;
+        const { readingData, bookTable, modelState } = this.state;
         const { tableState } = this.props;
 
         let bookData = 'loading';
         if (readingData) bookData = readingData;
         return (
             <div>
-                <div>
+                {/* <div>
                     <button onClick={() => this.handleTableOpen()}>open</button>
+                </div> */}
+                <div>
+                    <ReadSet modelState={modelState}/>
                 </div>
-                <div className='readContent' onClick={() => this.handleContentClick()}>
+                <div className='read_content' onClick={() => this.handleContentClick()}>
                     <ReadContent bookData={bookData} />
                 </div>
-                <div ref='tableWrap' className='readTable'>
+                <div ref='tableWrap' className='read_table'>
                     { 
                         bookTable && 
                         <ReadTable 
