@@ -9,8 +9,6 @@ import { matchRoutes, renderRoutes } from 'react-router-config';
 
 import routes from './route';
 
-
-
 export default async (url) => {
     const history = createMemoryHistory();
     const store = createStore(history);
@@ -30,9 +28,9 @@ export default async (url) => {
         App: () => (
             <Provider store={store}>
                 <ConnectedRouter history={history}>
-                    <StaticRouter location={url} >
+                    <StaticRouter location={url} context={{}}>
                         <Switch>
-                        {renderRoutes(routes)}
+                            {renderRoutes(routes)}
                         </Switch>
                     </StaticRouter>
                 </ConnectedRouter>

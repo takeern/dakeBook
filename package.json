@@ -64,6 +64,8 @@
     "react-redux": "^5.1.0",
     "react-router-config": "^4.4.0-beta.6",
     "react-router-dom": "^4.3.1",
+    "react-tiny-virtual-list": "^2.2.0",
+    "react-virtualized": "^9.21.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "webpack": "^4.27.0"

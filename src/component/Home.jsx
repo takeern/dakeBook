@@ -12,13 +12,15 @@ import { getLogoSrc } from '../redux/home/action';
 
 const mapStateToProps = (state) => {
     const { message, poweredBy, img_src } = state.home;
+    const { localDb } = state.init;
     return {
         message,
         poweredBy,
         img_src,
+        localDb,
     };
 };
-
+import { localStorageGet } from '../ulit/ulit';
 // const mapDispatchToProps = (dispatch) => {
 //     return {
 //         getLogoSrc: () => dispatch(getLogoSrc()),
@@ -31,18 +33,18 @@ export default class Home extends PureComponent {
         return new Promise(resolve => {
             getLogoSrc()
                 .then(res => {
-                    if(res.ok) return res.json();
+                    if (res.ok) return res.json();
                     
                     throw new Error('net not work');
                 })
-                .then(data => {
+                .then (data => {
                     store.dispatch({
                         type: GOT_LOGO_SRC,
                         payload: data.img_src,
                     });
                     return resolve();
                 })
-                .catch(() => {
+                .catch (() => {
                     console.log('%c you can try npm run server', 'background:#aaa;color:#bada55');
                     store.dispatch({
                         type: GOT_LOGO_SRC,
@@ -52,9 +54,7 @@ export default class Home extends PureComponent {
                 });
         });
     }
-
-
-    render() {
+    render () {
         const { img_src } = this.props;
         return (
             <React.Fragment>
