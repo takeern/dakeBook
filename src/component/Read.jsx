@@ -29,6 +29,8 @@ export default class Read extends Component {
             bookNumber: new RegExp(/[?&]bookNumber=([^&]+)/g).exec(window.location.href)[1],
             readingData: null, // 当前阅读章节数据
             modelState: '白天',
+            setShowState: false,
+            bookTable: [], // 目录数据
         };
     }
     /**
@@ -252,6 +254,30 @@ export default class Read extends Component {
             bookTable: bookTable,
         });
     }
+    /**
+     * 获取某章节数据
+     * @param {number} tableNumber 章节目录号
+     */
+    onTableChange(tableNumber) {
+        const { tableState } = this.props;
+        const { bookTable } = this.state;
+        // console.log(tableNumber)
+        const checkNumber = tableNumber - 1000000;
+        if (checkNumber < 0 || checkNumber > tableState.length) return;
+        const serachNumber = this.props.localBookNumber * 1000000 + tableNumber;
+        if (tableState[tableNumber] == '1') { 
+            // 本地有缓存
+            this.getTableData(serachNumber).then(bookData => {
+                if (bookData) {
+                    this.fetchTableData(tableNumber, bookData.data);
+                } else {
+                    this.fetchTableData(tableNumber, null, bookTable[checkNumber].href, checkNumber);
+                }
+            });
+        } else {
+            this.fetchTableData(tableNumber, null, bookTable[checkNumber].href, checkNumber);
+        }
+    }
 
     // 组件操作 
     
@@ -278,22 +304,22 @@ export default class Read extends Component {
             e.target.parentNode.getAttribute('tableKey');
         // console.log(tableKey);
         const tableNumber = parseInt(tableKey) + 100000;
-        const serachNumber = this.props.localBookNumber * 1000000 + tableNumber;
-
-        const { tableState } = this.props;
-        const { bookTable } = this.state;
-        if (tableState[tableKey] == '1') { 
-            // 本地有缓存
-            this.getTableData(serachNumber).then(bookData => {
-                if (bookData) {
-                    this.fetchTableData(tableNumber, bookData.data);
-                } else {
-                    this.fetchTableData(tableNumber, null, bookTable[tableKey].href, tableKey);
-                }
-            });
-        } else {
-            this.fetchTableData(tableNumber, null, bookTable[tableKey].href, tableKey);
-        }
+        // const serachNumber = this.props.localBookNumber * 1000000 + tableNumber;
+        this.onTableChange(tableNumber);
+        // const { tableState } = this.props;
+        // const { bookTable } = this.state;
+        // if (tableState[tableKey] == '1') { 
+        //     // 本地有缓存
+        //     this.getTableData(serachNumber).then(bookData => {
+        //         if (bookData) {
+        //             this.fetchTableData(tableNumber, bookData.data);
+        //         } else {
+        //             this.fetchTableData(tableNumber, null, bookTable[tableKey].href, tableKey);
+        //         }
+        //     });
+        // } else {
+        //     this.fetchTableData(tableNumber, null, bookTable[tableKey].href, tableKey);
+        // }
     }
     /**
      * reset 页面，更新数据
@@ -313,9 +339,9 @@ export default class Read extends Component {
                 );
             }
         }
+        this.props.readingTableNumber = readingTableNumber;
         this.setState({
             readingData: bookData,
-            readingTableNumber,
             tableState,
         });
     }
@@ -325,23 +351,69 @@ export default class Read extends Component {
         if (this.props.tableShowState) {
             this.handleTableClose();
             return;
-        } else {
-            // open or close read set component
+        }
+        this.setState({
+            setShowState: !this.state.setShowState,
+        });
+    }
+
+    // component set -->
+    handleChangeClick (cmd) {
+        const { readingTableNumber } = this.props;
+        if (cmd === 'next') {
+            const tableNumber = readingTableNumber + 1;
+
+            this.onTableChange(tableNumber);
+        } else if (cmd === 'last') {
+            const tableNumber = readingTableNumber - 1;
+            this.onTableChange(tableNumber);
+        }
+    }
+    handleSetClick(e) {
+        let target = e.target;
+        while(!target.getAttribute('data-set')) {
+            if(target.className === 'read_set') return;
+            target = target.parentNode;
+        }
+        const cmd = target.getAttribute('data-set');
+        switch(cmd) {
+            case('目录'): {
+                if (!this.props.tableShowState) {
+                    this.handleTableOpen();
+                } else {
+                    this.handleTableClose();
+                }
+                break;
+            }
+            default: break;
         }
     }
     render () {
-        const { readingData, bookTable, modelState } = this.state;
-        const { tableState } = this.props;
-
-        let bookData = 'loading';
+        const { readingData, bookTable, modelState, setShowState } = this.state;
+        const { tableState, readingTableNumber } = this.props;
+        let bookData = 'loading', tableTitle;
         if (readingData) bookData = readingData;
+        if (bookTable && readingTableNumber) tableTitle = bookTable[parseInt(readingTableNumber) - 100000].title;
+
         return (
             <div>
                 {/* <div>
                     <button onClick={() => this.handleTableOpen()}>open</button>
                 </div> */}
-                <div>
-                    <ReadSet modelState={modelState}/>
+                <div style={{
+                    position: 'fixed',
+                    height: 0,
+                    width: 0,
+                }}>
+                    { 
+                        setShowState && 
+                        <ReadSet 
+                        modelState={modelState} 
+                        tableTitle={tableTitle}
+                        handleChangeClick={this.handleChangeClick.bind(this)}
+                        handleSetClick={this.handleSetClick.bind(this)}
+                        /> 
+                    }
                 </div>
                 <div className='read_content' onClick={() => this.handleContentClick()}>
                     <ReadContent bookData={bookData} />
