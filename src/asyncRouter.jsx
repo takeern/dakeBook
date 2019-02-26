@@ -81,7 +81,7 @@ class AsyncRouter extends Component {
         }
 
         const showChildren = this.state.showChildren && this.state.hasSetInit && this.state.nextlocation === this.props.location ;
-
+        console.log(showChildren);
         return (
             <Route
                 location={location}

@@ -4,7 +4,10 @@ import { tfetch } from '../../ulit/ulit';
 const getInitData = (bookNumber) => {
     return tfetch(`${api.getBookInitData}${bookNumber}`, {
         mode: 'cors',
-    }, 5000).then(res => res.json());
+    }, 10000).then(res => {
+        if (res.json) return res.json();
+        return res;
+    });
 };
 
 const getBookData = (bookNumber, bookHref) => {
