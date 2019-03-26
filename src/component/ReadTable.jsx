@@ -1,15 +1,17 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import List from 'react-virtualized/dist/commonjs/List';
 
-export default class ReadContent extends PureComponent {
+export default class ReadContent extends Component {
+    shouldComponentUpdate(nextProps) {
+        return nextProps.tableState.toString() !== this.props.tableState.toString();
+    }
     render () {
         const { bookTable, tableState } = this.props;
-
+        if(!bookTable) return null;
         const clientHeight = window.screen.height;
         const clientWidth = window.screen.width;
         
-        const lineHeight = parseInt(clientHeight)/16;
-        
+        const lineHeight = parseInt(clientHeight) / 16;
         const rowRenderer = ({ index, key, style }) => {
             return (
                 <div 
@@ -40,9 +42,8 @@ export default class ReadContent extends PureComponent {
                 </div>
             );
         };
-       
         return (
-            <div  onClick={(e) => this.props.handleTableClick(e)} >
+            <div onClick={(e) => this.props.handleTableClick(e)} >
                 <List 
                 height={clientHeight}
                 rowCount={bookTable.length}

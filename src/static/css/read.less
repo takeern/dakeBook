@@ -16,6 +16,57 @@
         }
     }
 }
+
+@keyframes fadeIn {
+    0% { 
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+}
+.message {
+    animation: fadeIn;/*动画名称*/  
+    animation-duration: 3s;/*动画持续时间*/ 
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-fill-mode: forwards;
+     -ms-animation-fill-mode: forwards;
+      -o-animation-fill-mode: forwards;
+         animation-fill-mode: forwards;
+    -webkit-transition-timing-function: ease-in;
+    -moz-transition-timing-function: ease-in;
+    -ms-transition-timing-function: ease-in;
+    -o-transition-timing-function: ease-in;
+        transition-timing-function: ease-in;
+}
+.leftIcon {
+    display :inline-block;
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    display: inline-block;
+    margin-left: 80vw;
+}
+
+.leftIcon::after {
+    display: inline-block;
+    content: " ";
+    height: 18px;
+    width: 18px;
+    border-width: 2px 2px 0 0;
+    border-color: #c7c7cc;
+    border-style: solid;
+    transform: matrix(0.71, 0.71, -0.71, 0.71, 0, 0);
+    position: absolute;
+    top: 50%;
+    margin-top: -9px;
+    opacity: 0.8;
+}
+.leftIcon.active::after {
+    transform-origin: center;
+    transform: rotate(-135deg);
+    transition: transform .3s;
+}
 // .read_content {
 //     background-color: antiquewhite;
 // }

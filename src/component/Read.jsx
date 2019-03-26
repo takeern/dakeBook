@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { localStorageGet, localStorageSet } from '../ulit/ulit';
+import { localStorageGet, localStorageSet, createSignal } from '../ulit/ulit';
 
 // component
 import ReadTable from './ReadTable';
@@ -10,7 +10,7 @@ import ReadSet from './ReadSet';
 import '../static/css/index.less';
 import '../static/css/read.less';
 // action 
-import { getInitData, getBookData } from '../redux/read/action';
+import { getInitData, getBookData, mapDispatch, handleDownload } from '../redux/read/action';
 
 const mapStateToProps = (state) => {
     const { localDb, storageProps } = state.init;
@@ -20,7 +20,7 @@ const mapStateToProps = (state) => {
     };
 };
 
-@connect(mapStateToProps)
+@connect(mapStateToProps, mapDispatch)
 export default class Read extends Component {
     constructor(props) {
         super(props);
@@ -32,6 +32,7 @@ export default class Read extends Component {
             setShowState: false,
             bookTable: [], // 目录数据
             contentFont: 28,
+            controller: null,
         };
     }
     /**
@@ -64,7 +65,6 @@ export default class Read extends Component {
         
     }
     getDbInitData (localBookNumber, tableState, readingTableNumber) {
-        console.log(localBookNumber, tableState, readingTableNumber, 'getDbInitData');
         const indb = this.checkReadingTableState(readingTableNumber, tableState);
         if (indb) {
             const pr2 = new Promise(reslove => {
@@ -83,7 +83,7 @@ export default class Read extends Component {
                 }
                 if (!data[0]) {
                     const tableNumber = parseInt(readingTableNumber) - 100000;
-                    const res = await this.fetchBookData(data[1][tableNumber].href, this.state.bookNumber);
+                    const res = await this.fetchBookData(data[1][tableNumber].href, null, this.state.bookNumber);
                     if (res.bookData) {
                         this.setTableBookData(res.bookData);
                         return this.setReactState(res.bookData, data[1], localBookNumber, tableState, readingTableNumber);
@@ -123,8 +123,8 @@ export default class Read extends Component {
             }
         }
     }
-    fetchBookData(bookHref, bookNumber = this.state.bookNumber) {
-        const res = getBookData(bookNumber, bookHref);
+    fetchBookData(bookHref, signal, bookNumber = this.state.bookNumber) {
+        const res = getBookData(bookNumber, bookHref, signal);
         return res;
     }
     // 获取本地storage 书号
@@ -174,7 +174,7 @@ export default class Read extends Component {
     //  存储目录到indexdb
     initDbTable (table) {
         let { storageProps } = this.props;
-        const { readingBookName } = this.state;
+        const { readingBookName, bookNumber } = this.state;
         let obj;
         let localBookNumber;
         if (storageProps) {
@@ -184,6 +184,7 @@ export default class Read extends Component {
             obj = Object.assign({}, storageProps, {
                 length,
                 [readingBookName]: localBookNumber,
+                [localBookNumber]: bookNumber,
             });
             localStorageSet('localBooks', JSON.stringify(obj));
         } else {
@@ -245,10 +246,10 @@ export default class Read extends Component {
      */
     onTableChange(tableNumber) {
         const { bookTable, tableState, localBookNumber } = this.state;
-        const checkNumber = tableNumber - 1000000;
+        const checkNumber = tableNumber - 100000;	
         if (checkNumber < 0 || checkNumber > tableState.length) return;
         const serachNumber = localBookNumber * 1000000 + tableNumber;
-        if (tableState[tableNumber] == '1') { 
+        if (tableState[checkNumber] == '1') { 
             // 本地有缓存
             this.getTableData(serachNumber).then(bookData => {
                 if (bookData) {
@@ -266,7 +267,7 @@ export default class Read extends Component {
     
     //table 组件
     handleTableOpen () {
-        if (this.refs.tableWrap.className.indexOf('close')) {
+        if (this.refs.tableWrap.className.indexOf('close') !== -1) {
             this.refs.tableWrap.className = this.refs.tableWrap.className.replace('close', 'open');
             this.refs.tableWrap.style.transition = 'transform 0.3s';
             this.refs.tableWrap.style.transform = 'translate(70vw, 0)';
@@ -274,7 +275,7 @@ export default class Read extends Component {
     }
 
     handleTableClose () {
-        if (this.refs.tableWrap.className.indexOf('open')) {
+        if (this.refs.tableWrap.className.indexOf('open') !== -1) {
             this.refs.tableWrap.className = this.refs.tableWrap.className.replace('open', 'close');
             this.refs.tableWrap.style.transition = 'transform 0.5s';
             this.refs.tableWrap.style.transform = 'translate(-70vw, 0)';
@@ -295,25 +296,78 @@ export default class Read extends Component {
      * @param {string} bookData 章节数据
      */
     async fetchTableData (readingTableNumber, bookData, bookHref, tableNumber) {
-        let { tableState, localBookNumber } = this.state;
+        let { tableState, localBookNumber, controller } = this.state;
+        const { loadingChange } = this.props;
         if (!bookData) {
-            const res = await this.fetchBookData(bookHref);
+            loadingChange(true);
+            if (controller) {
+                controller.abort();
+            }
+            controller = createSignal();
+            const signal = controller ? controller.signal : null;
+            const res = await this.fetchBookData(bookHref, signal);
+            loadingChange(false);
             bookData = res.bookData;
             if (bookData) {
-                tableState = this.updateStorageTableState(tableNumber);
+                tableState = this.updateStorageTableState(tableNumber, localBookNumber);
                 this.setTableBookData(bookData,
                     localBookNumber * 1000000 + parseInt(tableNumber) + 100000
                 );
+            } else {
+                console.log('资源加载失败');
+                return;
             }
         }
-        
+        this.handleTableClose();
         this.setState({
             readingData: bookData,
             tableState,
             readingTableNumber,
+            controller,
+            setShowState: false,
+        }, () => window.scrollTo(0, 0));
+    }
+    updateTableState() {
+        const { tableState } = this.getBookRecord();
+        this.setState({
+            tableState,
         });
     }
-
+    // download All Book 
+    downloadAllBook() {
+        let { bookNumber, tableState, localBookNumber, bookTable } = this.state;
+        const rxob = handleDownload(bookNumber);
+        rxob.subscribe({
+            next: (v) => {
+                const { type, data } = v;
+                switch (type) {
+                    case('bookData'):
+                        data.map(i => {
+                            const { tableOffset, tableData } = i;
+                            if (tableState[tableOffset] === '0') {
+                                tableState = this.updateStorageTableState(tableOffset, localBookNumber);
+                                this.setTableBookData(tableData, localBookNumber * 1000000 + 100000 + tableOffset);
+                            }
+                            this.setState({
+                                tableState,
+                            });
+                        });
+                        break;
+                    case('bookState'):
+                        console.log(data);
+                        break;
+                    case('bookTable'):
+                        if (bookTable.length !== data.length) {
+                            this.setState({
+                                bookTable,
+                            });
+                        }
+                        break;
+                    default: break;
+                }
+            },
+        });
+    }
     // content component -->
     handleContentClick () {
         const { setShowState } = this.state;
@@ -328,10 +382,9 @@ export default class Read extends Component {
 
     // component set -->
     handleChangeClick (cmd) {
-        const { readingTableNumber } = this.props;
+        const { readingTableNumber } = this.state;
         if (cmd === 'next') {
-            const tableNumber = readingTableNumber + 1;
-
+            const tableNumber = parseInt(readingTableNumber) + 1;
             this.onTableChange(tableNumber);
         } else if (cmd === 'last') {
             const tableNumber = readingTableNumber - 1;
@@ -360,6 +413,10 @@ export default class Read extends Component {
                 });
                 break;
             }
+            case('下载'): {
+                this.downloadAllBook();
+                break;
+            }
             default: break;
         }
     }
@@ -381,12 +438,9 @@ export default class Read extends Component {
         let bookData = 'loading', tableTitle;
         if (readingData) bookData = readingData;
         if (bookTable && readingTableNumber) tableTitle = bookTable[parseInt(readingTableNumber) - 100000].title;
-
+        if(!readingData) return null;
         return (
             <div>
-                {/* <div>
-                    <button onClick={() => this.handleTableOpen()}>open</button>
-                </div> */}
                 <div style={{
                     position: 'fixed',
                     height: 0,
@@ -408,7 +462,7 @@ export default class Read extends Component {
                 </div>
                 <div ref='tableWrap' className='read_table close'>
                     { 
-                        bookTable && 
+                        // bookTable && 
                         <ReadTable 
                         bookTable={bookTable} 
                         tableState={tableState}

@@ -1,16 +1,24 @@
-import Home from './component/Home.jsx';
+import View from './component/View.jsx';
 import Read from './component/Read';
+import Search from './component/SearchBook';
 
 const routes = [
     {
         path: '/',
-        component: Home,
-        exact: true,
-    },
-    {
-        path: '/read',
-        component: Read,
-        exact: true,
+        component: View,
+        exact: false,
+        routes: [
+            {
+                path: '/read',
+                component: Read,
+                exact: true,
+            },
+            {
+                path: '/search',
+                component: Search,
+                exact: true,
+            },
+        ],
     },
 ];
 

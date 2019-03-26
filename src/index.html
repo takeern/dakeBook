@@ -5,8 +5,10 @@
       <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, width=device-width">  
       <title><%= htmlWebpackPlugin.options.title %></title>
   </head>
+  <script src="./lib/cache.js"></script>
   <script type="text/javascript">
-     function getDeviceSystem () {
+      // var vConsole = new VConsole();
+      function getDeviceSystem () {
         const u = navigator.userAgent
         const isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1
         const isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)

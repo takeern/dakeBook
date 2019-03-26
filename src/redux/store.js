@@ -4,10 +4,12 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 
 import home from './home/reducers';
 import init from './init/reducers';
+import read from './read/reducers';
 
 const rootReducer = combineReducers({
     home,
     init,
+    read,
     //...
 });
 

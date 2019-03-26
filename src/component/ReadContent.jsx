@@ -7,6 +7,9 @@ export default class ReadContent extends PureComponent {
             backgroundColor: modelState === '白天'? 'antiquewhite' : 'black',
             color: modelState === '白天'? 'black' : 'white',
             fontSize: contentFont,
+            whiteSpace: 'pre-wrap',
+            paddingLeft: 8,
+            minHeight: '100vh',
         };
         return (
             bookData &&

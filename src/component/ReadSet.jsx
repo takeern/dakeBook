@@ -40,6 +40,10 @@ export default class ReadContent extends PureComponent {
                 html: '#icon-tianqitubiao_qingtianbai',
             },
             {
+                text: '下载',
+                html: '#icon-xiazai',
+            },
+            {
                 text: '设置',
                 html: '#icon-shezhi',
             },
@@ -135,12 +139,13 @@ export default class ReadContent extends PureComponent {
                     <div data-font='-'>-</div>
                 </div>
                 <div style={{
+                    position: 'fixed',
+                    bottom: 0,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-around',
                     height: '9vh',
                     width: '100vw',
-                    marginTop: '43vh',
                     backgroundColor: 'black',
                     color: 'white',
                     opacity: .9,
