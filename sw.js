@@ -17,13 +17,13 @@ const shouldCache = [
 ];
 
 this.addEventListener('install', function (event) {
-    this.skipWaiting();
+    // this.skipWaiting();
     // 如果监听到了 service worker 已经安装成功的话，就会调用 event.waitUntil 回调函数
     event.waitUntil(
         // 安装成功后操作 CacheStorage 缓存，使用之前需要先通过 caches.open() 打开对应缓存空间。
         caches.open(cacheKey).then(function (cache) {
             return cache.addAll([
-                '/index.html',
+                '/src/static/img/icon144.png',
                 '/index.js',
             ]);
         })
@@ -63,7 +63,7 @@ this.addEventListener('fetch', function (event) {
                         }
                     }
                 }
-            };
+            }
 
             // 如果 service worker 没有返回，那就得直接请求真实远程服务
             const request = event.request.clone(); // 把原始请求拷过来
@@ -94,13 +94,11 @@ this.addEventListener('fetch', function (event) {
 
 
 this.addEventListener('message', function (event) {
-    console.log(event, 'sw');
     if (event.data === 'port') {
         messagePort = event.ports[0];
         messagePort.onmessage = e => {
             if (e.data.type === 'urlTime') {
                 urlTiming = e.data.data;
-                console.log(urlTiming, 'init');
             }
         };
     }
