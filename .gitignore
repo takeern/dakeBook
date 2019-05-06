@@ -5,7 +5,6 @@ node_modules
 .idea
 .vscode
 .history
-dist
 staticServer.js
 node_modules
 webpack.config.js

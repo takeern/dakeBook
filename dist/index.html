@@ -1,0 +1,10 @@
+<!DOCTYPE html><html><head><meta charset=utf-8><link rel=manifest href=/lib/manifest.json><meta name=viewport content="initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,width=device-width"><title>development</title><link href=/dist/index.css rel=stylesheet></head><script src=./lib/cache.js></script><script type=text/javascript>// var vConsole = new VConsole();
+      function getDeviceSystem () {
+        const u = navigator.userAgent
+        const isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1
+        const isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)
+        const device = isAndroid ? 2 : isiOS ? 1 : 3
+        return device
+      }
+      var oHtml = document.documentElement;
+      oHtml.style.fontSize = getDeviceSystem() === 3 ? '75px' : (oHtml.clientWidth / 10 + 'px');</script><body><div id=main class=server-app></div><script type=text/javascript src=/dist/vendors~index.js></script><script type=text/javascript src=/dist/index.js></script></body></html>

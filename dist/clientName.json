@@ -1,0 +1,9 @@
+{
+  "publicPath": "/dist",
+  "filename": [
+    "index.css",
+    "index.js",
+    "vendors~index.js"
+  ],
+  "isAbsolutePath": false
+}
