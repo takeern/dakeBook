@@ -24,7 +24,7 @@ this.addEventListener('install', function (event) {
         caches.open(cacheKey).then(function (cache) {
             return cache.addAll([
                 '/src/static/img/icon144.png',
-                '/index.js',
+                '/dist/index.js',
             ]);
         })
     );
