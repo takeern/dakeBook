@@ -33,6 +33,7 @@ this.addEventListener('install', function (event) {
                 '/lib/cache.js',
                 '/lib/manifest.json',
                 '/dist/index.css',
+                '/favicon.ico',
             ]);
         })
     );
