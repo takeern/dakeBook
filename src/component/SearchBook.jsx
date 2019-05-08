@@ -109,6 +109,7 @@ export default class Search extends PureComponent {
                 }}>
                     <input
                     ref='searchBtn' 
+                    type='text'
                     onKeyPress={(e) => {
                         if (e.charCode === 13) {
                             this.handleSearch();
