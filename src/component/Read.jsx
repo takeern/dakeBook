@@ -192,6 +192,7 @@ export default class Read extends Component {
             localBookNumber = 1000 + length;
             obj = {
                 [readingBookName]: localBookNumber,
+                [localBookNumber]: bookNumber,
                 length,
             };
             localStorageSet('localBooks', JSON.stringify(obj));

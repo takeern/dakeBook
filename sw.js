@@ -1,4 +1,4 @@
-const cacheVersion = 'v1.7';
+const cacheVersion = 'v1.8';
 const overPage = '/ayBook';
 const cacheKey = overPage + cacheVersion;
 let urlTiming = {};
@@ -12,6 +12,10 @@ const shouldCache = [
     },
     {
         reg: new RegExp(/(jpg|jpeg|png)$/i), // 缓存 图片资源
+        time: 86400000,
+    },
+    {
+        reg: new RegExp(/search/i),
         time: 86400000,
     },
 ];

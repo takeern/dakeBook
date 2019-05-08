@@ -1,4 +1,4 @@
-const develement = 'uat';
+const develement = 'dev';
 const host = develement === 'dev' ? 'https://www.ijosser.com/api/' : '/api/';
 export default {
     getBookInitData: host + 'getBookInitData?bookNumber=',
