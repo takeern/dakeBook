@@ -36,7 +36,7 @@ const mapDispatch = (dispatch) => {
 };
 
 const handleDownload = (bookNumber) => {
-    const socket = new WebSocket(`ws://${api.downloadBook}`);
+    const socket = new WebSocket(`wss://${api.downloadBook}`);
     return Observable.create(observer => {
         socket.onopen = () => {
             socket.send(JSON.stringify({
