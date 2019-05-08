@@ -190,7 +190,7 @@ const showBookItem = (searchData) => {
             }}
             >
                 <div>
-                    <img src={`/src/static/img/fm${index}.jpeg`} width={100}/>
+                    <img src={`/src/static/img/fm${index % 13}.jpeg`} width={100}/>
                 </div>
                 <div style={{
                     marginLeft: '5px',
