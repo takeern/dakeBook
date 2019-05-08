@@ -25,6 +25,10 @@ this.addEventListener('install', function (event) {
             return cache.addAll([
                 '/src/static/img/icon144.png',
                 '/dist/index.js',
+                '/dist/vendors~index.js',
+                '/lib/cache.js',
+                '/lib/manifest.json',
+                '/dist/index.css',
             ]);
         })
     );
