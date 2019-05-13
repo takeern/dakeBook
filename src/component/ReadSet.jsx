@@ -23,6 +23,9 @@ export default class ReadContent extends PureComponent {
             handleSetClick(cmd);
         }
     }
+    onGoBackClick() {
+        this.props.goBack();
+    }
     render() {
         const { tableTitle, modelState, handleChangeClick, handleFontChange } = this.props;
         const { setOpen } = this.state;
@@ -90,7 +93,10 @@ export default class ReadContent extends PureComponent {
                     fontSize: 14,
                     textAlign: 'center',
                     color: 'white',
-                }}>{tableTitle}</div>
+                }}>
+                <div className='goBackIcon' onClick={() => this.onGoBackClick()}></div>
+                {tableTitle}
+                </div>
                 <div style={{
                     marginTop: '35vh',
                     display: 'flex',

@@ -455,6 +455,7 @@ export default class Read extends Component {
                         handleChangeClick={this.handleChangeClick.bind(this)}
                         handleSetClick={this.handleSetClick.bind(this)}
                         handleFontChange={this.handleFontChange.bind(this)}
+                        goBack={this.props.history.goBack}
                         /> 
                     }
                 </div>

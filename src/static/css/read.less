@@ -70,3 +70,25 @@
 // .read_content {
 //     background-color: antiquewhite;
 // }
+.goBackIcon {
+    display: inline-block;
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    margin-left: 13px;
+    left: 0px;
+}
+
+.goBackIcon::after {
+    display: inline-block;
+    content: " ";
+    height: 14px;
+    width: 14px;
+    border-width: 4px 4px 0 0;
+    border-color: #c7c7cc;
+    border-style: solid;
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: rotate(-135deg);
+}
