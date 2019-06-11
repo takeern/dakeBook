@@ -29,13 +29,13 @@ export default class Search extends PureComponent {
         const bookName = searchBtn.value.replace(/^\s+|\s+$/g, '');
         searchBook(bookName).then(data => {
             loadingChange(false);
-            if(data.length === 0) {
+            if(data && data.BooksDesc.length === 0) {
                 toast('找不到该书');
             }else if (Object.prototype.toString.apply(data) === '[object String]') {
                 toast('系统超时，请稍后尝试');
             } else {
                 this.setState({
-                    searchData: data,
+                    searchData: data.BooksDesc,
                 });
             }
         });
