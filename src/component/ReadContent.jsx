@@ -8,8 +8,9 @@ export default class ReadContent extends PureComponent {
             color: modelState === '白天'? 'black' : 'white',
             fontSize: contentFont,
             whiteSpace: 'pre-wrap',
-            paddingLeft: 8,
+            padding: '0px 5px 0px 10px',
             minHeight: '100vh',
+            lineHeight: 1.8
         };
         return (
             bookData &&

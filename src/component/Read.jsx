@@ -31,7 +31,7 @@ export default class Read extends Component {
             modelState: '白天',
             setShowState: false,
             bookTable: [], // 目录数据
-            contentFont: 28,
+            contentFont: localStorageGet('contentFont') ? parseInt(localStorageGet('contentFont'), 10) : 18,
             controller: null,
         };
     }
@@ -135,6 +135,7 @@ export default class Read extends Component {
         return false;
     }
     setReadHistory (localBookNumber, readingTableNumber) {
+        console.log(readingTableNumber);
         localStorageSet(`${localBookNumber}-history`, readingTableNumber);
     }
     // 获取本地阅读历史，书目录
@@ -320,6 +321,7 @@ export default class Read extends Component {
             }
         }
         this.handleTableClose();
+        this.setReadHistory(localBookNumber, readingTableNumber);
         this.setState({
             readingData: bookData,
             tableState,
@@ -425,14 +427,17 @@ export default class Read extends Component {
         const target = e.target;
         let { contentFont } = this.state;
         if (target.getAttribute('data-font') === '+') {
+            contentFont += 1;
             this.setState({
-                contentFont: ++ contentFont,
+                contentFont,
             });
         } else {
+            contentFont -= 1;
             this.setState({
-                contentFont: -- contentFont,
+                contentFont,
             });
         }
+        localStorageSet('contentFont', contentFont);
     }
     render () {
         const { readingData, bookTable, modelState, setShowState, contentFont, tableState, readingTableNumber } = this.state;

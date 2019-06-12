@@ -208,10 +208,14 @@ const showBookItem = (searchData) => {
                     <p style={{
                         fontSize: '13px',
                         color: 'darkgreen',
+                    }}>作者： {item.bookAuthor}</p>
+                    <p style={{
+                        fontSize: '13px',
+                        color: 'darkgreen',
                     }}>状态： {item.bookState}</p>
                     <div style={{
                         whiteSpace:' pre-wrap',
-                        fontSize: 14,
+                        fontSize: 12,
                         height: 140,
                         overflow: 'hidden',
                     }}>简介： {item.bookIntro}</div>
