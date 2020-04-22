@@ -214,7 +214,6 @@ const showBookItem = (searchData) => {
                         color: 'darkgreen',
                     }}>状态： {item.bookState}</p>
                     <div style={{
-                        whiteSpace:' pre-wrap',
                         fontSize: 12,
                         height: 140,
                         overflow: 'hidden',
